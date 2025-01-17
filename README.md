@@ -9,7 +9,7 @@
 
 # laradock
 
-> _To create a simple Laravel development environment using Docker Compose, which runs `PHP-FPM` and `Nginx`, and offers high flexibility for customization to suit your project's specific needs._
+> _To create a simple Laravel development environment using `Docker Compose`, which runs `PHP-FPM` and `Nginx`, and offers high flexibility for customization to suit your project's specific needs._
 
 >
 
@@ -21,52 +21,58 @@
 
 >
 
-`laradock`, a Docker-based solution, offers a range of configuration options that allow you to easily extend and modify the default environment. By adjusting the provided scripts and configuration files, you can fine-tune the environment to meet the requirements of your application.
+`laradock` is a Docker Compose-based solution that allows you to run Laravel applications using `PHP-FPM` and `Nginx`. It is designed to be highly flexible, enabling you to customize the environment to meet the unique needs of your project. Whether you need to adjust ports, select specific PHP versions, or add additional tools and services, `laradock` makes it easy to create a development environment that works seamlessly for you.
 
-Here are several examples of how you can customize the default environment to better suit your needs:
+**Key Features**
 
-- Choose any desired port for the application, enabling you to tailor the environment to your network setup.
-- Select any `PHP` version from the [official PHP image repository](https://hub.docker.com/_/php/tags?name=-fpm-alpine), giving you the flexibility to work with the `PHP` version most suitable for your app.
-- Add additional packages such as `bash`, `yarn`, or others to enhance the development environment with more tools that might be needed for your workflow.
-- Install custom `PHP` extensions or tools to meet the specific requirements of your application.
-- Modify `Nginx` configurations to adapt the web server's behavior to the specific needs of your Laravel app, such as adjusting rewrite rules or configuring SSL.
+- Customizable Ports: You can configure any port for your application to fit your network setup, ensuring compatibility with your existing infrastructure.
+- Flexible PHP Versions: Choose from a wide range of PHP versions available in the [official PHP image repository](https://hub.docker.com/_/php/tags?name=-fpm-alpine), allowing you to match the exact version required by your project.
+- Extendable Environment: Easily add additional packages such as `bash`, `yarn`, or custom PHP extensions to tailor the environment to your needs.
+- Nginx Customization: Modify Nginx configurations to suit your Laravel application, including SSL settings, rewrite rules, and other customizations.
+- Customize Services: Add any additional services like `MySQL`, `Redis`, or any other dependencies your project may require.
 
-For more detailed guidance on how to customize the Docker setup, refer to the following documentation files:
+For detailed instructions on how to customize your environment, refer to the following documentation:
 
-- App Image: [`compose/app/scripts/README.md`](./compose/app/scripts/README.md)
-- Web Image: [`compose/web/scripts/README.md`](./compose/web/scripts/README.md)
+- App Image: [`src/app/scripts/README.md`](./src/app/scripts/README.md)
+- Web Image: [`src/web/scripts/README.md`](./src/web/scripts/README.md)
+- Custom Services: [`src/custom/README.md`](./src/custom/README.md)
 
-By referencing these resources, you can easily configure the development environment to match your precise needs, ensuring a streamlined and efficient Laravel development experience.
+By following these resources, you can easily configure the development environment to match your precise needs, ensuring a streamlined and efficient Laravel development experience.
 
 ---
 
 > [!IMPORTANT]
 >
-> New features will be added over time! Right now, it **ONLY** supports **Linux**, but I’d love to expand it to macOS too. If you’re interested in helping it grow, your support could even help me save up for a MacBook 💻 to make that happen — _but only if you’re definitely able to!_ 😊 🎉
+> New features will be added over time! Currently, it **ONLY** supports **Linux**, but I’d love to expand it to macOS too. If you’re interested in helping it grow, your support could even help me save up for a MacBook 💻 to make that happen — _but only if you’re definitely able to!_ 😊 🎉
 >
 > [![Saweria][donate-saweria::shield]][donate-saweria::url] &nbsp; [![Trakteer][donate-trakteer::shield]][donate-trakteer::url] &nbsp; [![Ko-fi][donate-ko-fi::shield]][donate-ko-fi::url] &nbsp; [![PayPal][donate-paypal::shield]][donate-paypal::url]
 
 ## 🛠️ Installation
 
-1.  Clone this repository:
+1.  Clone the Repository:
 
     ```sh
-    git clone git@github.com:fyvri/laradock.git && cd laradock
+    git clone git@github.com:fyvri/laradock.git
     ```
 
-2.  Make the script executable:
+2.  Add `laradock` to Your `$PATH`:
 
     ```sh
-    chmod +x ./laradock.sh
+    sudo ln -s $(pwd)/laradock/bin/laradock.sh /usr/local/bin/laradock
     ```
+
+3.  Verify the Installation:
+
+    ```sh
+    which laradock
+    ```
+
+    _This should output the location where laradock is installed (e.g., /usr/local/bin/laradock)._
+
+> [!NOTE]
+> Ensure you have [`Docker`](https://docs.docker.com/engine/install/) installed and can run the `docker compose` command before proceeding.
 
 ## 🍻 Setup
-
-Before running `laradock`, make sure that you have installed [`Docker`](https://docs.docker.com/engine/install/) and are able to execute the `docker compose` command in your terminal.
-
-- **App Directories**
-
-  All of your app directories should be placed under the `src/` directory. This directory contains the collection of your Laravel apps, which will be installed and managed via `laradock`. For comprehensive guidance on how to accomplish this, please refer to the detailed steps provided [here](./src/README.md).
 
 - **App Image**
 
@@ -78,7 +84,7 @@ Before running `laradock`, make sure that you have installed [`Docker`](https://
   - `libjpeg-turbo-dev`
   - `libzip-dev`
 
-  Additionally, the `app` image will install several `PHP` extensions by default, including:
+  Additionally, the `app` image will install several PHP extensions by default, including:
 
   - `bcmath`
   - `gd`
@@ -87,58 +93,110 @@ Before running `laradock`, make sure that you have installed [`Docker`](https://
   - `pdo_mysql`
   - `zip`
 
-  However, you have the flexibility to customize the image by adding any extra packages or dependencies that your app requires. You can do this by creating custom scripts in the `compose/app/scripts/` directory. For detailed instructions on how to achieve this, please follow the steps outlined [here](./compose/app/scripts/README.md).
+  However, you have the flexibility to customize the image by adding any extra packages or dependencies that your app requires. You can do this by creating custom scripts in the `src/app/scripts/` directory. For detailed instructions on how to achieve this, please follow the steps outlined [here](./src/app/scripts/README.md).
 
 - **Web Image**
 
-  The `web` image is based on the `nginx:stable-alpine` image. It comes pre-configured to run `Nginx` and apply the necessary configurations for your app. However, if you need to add extra packages or replace the default `Nginx` configuration, you are free to modify it. To learn how to customize the `web` image, refer to the instructions provided [here](./compose/web/scripts/README.md).
+  The `web` image is based on the `nginx:stable-alpine` image. It comes pre-configured to run `Nginx` and apply the necessary configurations for your app. However, if you need to add extra packages or replace the default Nginx configuration, you are free to modify it. To learn how to customize the `web` image, refer to the instructions provided [here](./src/web/scripts/README.md).
+
+- **Custom Services**
+
+  `laradock` allows you to design and customize your environment to include any services your project may require, such as `MySQL`, `Redis`, or any other dependencies. The system is pre-configured to automatically detect and process Docker Compose files that follow a specific naming convention, requiring these files to end with the `.docker-compose.yml` extension. For a step-by-step guide on how to customize your environment and configure these services, refer to the detailed documentation [here](./src/custom/README.md).
 
 ## 🚀 Usage
 
-- **Basic**
+1.  Initialize:
 
-  Simply, `laradock` can be run with:
+    Navigate to your project directory and run the following command to initialize:
 
-  ```sh
-  ./laradock.sh compose
-  ```
+    ```sh
+    laradock init
+    ```
 
-- **Advanced**
+    _This command will prompt you for the project name, port, and PHP version. The Docker Compose settings will be saved in the `.laradock` directory._
 
-  ```sh
-  ./laradock.sh compose -n laradock -p 1337 -i laravel-10.x --php 8.1 --dev
-  ```
+2.  Build and Start Services:
+
+    ```sh
+    laradock compose
+    ```
+
+    _For more commands and options, run `laradock --help`._
 
 ## 🚩 Flags
 
-This will display help for the tool. Here are all the options it supports.
+This will display help for the tool. Here are all the full list of available commands and options it supports.
 
 ```console
-                                 🐳 v0.0.1
-______                 ____________          ______
+$ laradock --help
+______                 ____________       🐳 ______
 ___  /_____ _____________ ______  /_____________  /__
 __  /_  __ '/_  ___/  __ '/  __  /  __ \  ___/_  //_/
 _  / / /_/ /_  /   / /_/ // /_/ // /_/ / /__ _  ,<
 /_/  \__^_/ /_/    \__^_/ \__,_/ \____/\___/ /_/|_|
 
-Usage:
-   ./laradock.sh [command] [options...] <value> [--dev]
+Usage:  laradock [OPTIONS] COMMAND
 
-Commands:
-   compose       : Compose 🚀
-   help          : Show this help message 📖
+Define and run multi-container applications with laradock
 
 Options:
-   -n, --name    : Set the image name
-   -p, --port    : Set the app port (default: 8000)
-   -i, --input   : Set the app directory name (e.g., awesome-laravel)
-       --php     : Specify the PHP version (e.g., 5.6, 7.4, 8.1, etc)
-       --dev     : Build image on development
+      --all-resources              Include all resources, even those not used by services
+      --ansi string                Control when to print ANSI control characters ("never"|"always"|"auto") (default "auto")
+      --compatibility              Run compose in backward compatibility mode
+      --dry-run                    Execute command in dry run mode
+      --env-file stringArray       Specify an alternate environment file
+      --parallel int               Control max parallelism, -1 for unlimited (default -1)
+      --profile stringArray        Specify a profile to enable
+      --progress string            Set type of progress output (auto, tty, plain, json, quiet) (default "auto")
+  -p, --project-name string        Project name
 
-Examples:
-   ./laradock.sh compose
-   ./laradock.sh compose -n laravel-5.8 -p 8000 -i laravel-5.8 --php 7.2
-   ./laradock.sh compose -n laravel-9.x -p 8000 -i laravel-9.x --php 8.0 --dev
+Commands:
+  artisan     Execute artisan commands
+  clean       Stop and remove all projects (images, containers, volumes and networks)
+  composer    Execute composer commands
+  compose     Build images and run containers in the background
+  container   Manage containers
+  image       Manage images
+  init        Initialize laradock setup or reinitialize an existing one
+  network     Manage networks
+  reboot      Restart all services
+  shutdown    Stop all services
+  startup     Start all services
+  volume      Manage volumes
+
+Additional Commands:
+  attach      Attach local standard input, output, and error streams to a service's running container
+  build       Build or rebuild services
+  commit      Create a new image from a service container's changes
+  config      Parse, resolve and render compose file in canonical format
+  cp          Copy files/folders between a service container and the local filesystem
+  create      Creates containers for a service
+  down        Stop and remove containers, networks
+  events      Receive real time events from containers
+  exec        Execute a command in a running container
+  export      Export a service container's filesystem as a tar archive
+  images      List images used by the created containers
+  kill        Force stop service containers
+  logs        View output from containers
+  ls          List running compose projects
+  pause       Pause services
+  port        Print the public port for a port binding
+  ps          List containers
+  pull        Pull service images
+  push        Push service images
+  restart     Restart service containers
+  rm          Removes stopped service containers
+  run         Run a one-off command on a service
+  scale       Scale services
+  start       Start services
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop services
+  top         Display the running processes
+  unpause     Unpause services
+  up          Create and start containers
+  version     Show the Docker Compose version information
+  wait        Block until containers of all (or specified) services stop.
+  watch       Watch build context for service and rebuild/refresh containers when files are updated
 ```
 
 ## 👥 Contribution
@@ -158,4 +216,4 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## 📜 License
 
-This project is licensed under the [MIT License](./LICENSE). Feel free to use and modify it as needed.
+This project is licensed under the [GNU GPLv3 License](./LICENSE). You are free to use, modify, and distribute it in accordance with the terms of this license.
