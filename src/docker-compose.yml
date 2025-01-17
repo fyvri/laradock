@@ -1,0 +1,60 @@
+volumes:
+  node_modules:
+    name: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.node_modules
+  vendor:
+    name: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.vendor
+
+networks:
+  default:
+    name: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}
+    driver: bridge
+
+services:
+  app:
+    image: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.app:latest
+    container_name: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.app
+    build:
+      context: ..
+      dockerfile: ${MAIN_DIRECTORY:-.laradock}/app/Dockerfile
+      args:
+        - MAIN_DIRECTORY=${MAIN_DIRECTORY:-.laradock}
+        - MAIN_UID=${MAIN_UID:-1000}
+        - MAIN_GID=${MAIN_GID:-1000}
+        - MAIN_PHP_VERSION=${MAIN_PHP_VERSION:-}
+    volumes: &app_volumes
+      - type: bind
+        source: ..
+        target: /var/www/html
+        consistency: delegated
+      - type: volume
+        source: node_modules
+        target: /var/www/html/node_modules
+      - type: volume
+        source: vendor
+        target: /var/www/html/vendor
+    networks:
+      - default
+    restart: unless-stopped
+
+  web:
+    image: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.web:latest
+    container_name: ${MAIN_NAME:-laradock}.${MAIN_PROJECT_NAME:-laravel}.web
+    depends_on:
+      - app
+    build:
+      context: ..
+      dockerfile: ${MAIN_DIRECTORY:-.laradock}/web/Dockerfile
+      args:
+        - MAIN_DIRECTORY=${MAIN_DIRECTORY:-.laradock}
+        - MAIN_UID=${MAIN_UID:-1000}
+        - MAIN_GID=${MAIN_GID:-1000}
+        - MAIN_PROJECT_PORT=${MAIN_PROJECT_PORT:-8000}
+    ports:
+      - target: 80
+        published: ${MAIN_PROJECT_PORT:-8000}
+        protocol: tcp
+        mode: host
+    volumes: *app_volumes
+    networks:
+      - default
+    restart: unless-stopped
